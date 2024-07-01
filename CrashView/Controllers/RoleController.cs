@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CrashView.Entities;
 using CrashView.Data.Repositories;
-using CrashView.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace CrashView.Controllers
 {
@@ -13,12 +11,10 @@ namespace CrashView.Controllers
     public class RoleController : ControllerBase
     {
         private readonly IGenericRepository<Role> _roleRepository;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public RoleController(IGenericRepository<Role> roleRepository, IUnitOfWork unitOfWork)
+        public RoleController(IGenericRepository<Role> roleRepository)
         {
             _roleRepository = roleRepository;
-            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -43,7 +39,6 @@ namespace CrashView.Controllers
         public async Task<ActionResult<Role>> PostRole(Role role)
         {
             await _roleRepository.InsertAsync(role);
-            await _unitOfWork.CompleteAsync();
             return CreatedAtAction(nameof(GetRole), new { id = role.Role_ID }, role);
         }
 
@@ -54,24 +49,7 @@ namespace CrashView.Controllers
             {
                 return BadRequest();
             }
-
             await _roleRepository.UpdateAsync(role);
-            try
-            {
-                await _unitOfWork.CompleteAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await RoleExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
             return NoContent();
         }
 
@@ -79,14 +57,7 @@ namespace CrashView.Controllers
         public async Task<IActionResult> DeleteRole(int id)
         {
             await _roleRepository.DeleteAsync(id);
-            await _unitOfWork.CompleteAsync();
             return NoContent();
-        }
-
-        private async Task<bool> RoleExists(int id)
-        {
-            var role = await _roleRepository.GetByIdAsync(id);
-            return role != null;
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CrashView.Data.Repositories;
+using CrashView.Dto.Response;
 using CrashView.Entities;
-using CrashView.Data.Repositories;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 
 namespace CrashView.Controllers
 {
@@ -11,17 +11,42 @@ namespace CrashView.Controllers
     public class PersonController : ControllerBase
     {
         private readonly IGenericRepository<Person> _personRepository;
+        private readonly IMapper _mapper;
 
-        public PersonController(IGenericRepository<Person> personRepository)
+        public PersonController(IGenericRepository<Person> personRepository, IMapper mapper)
         {
             _personRepository = personRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Person>>> GetPersons()
+        public async Task<ActionResult<List<PersonsResponseDto>>> GetPersons()
         {
-            var persons = await _personRepository.GetAllAsync();
-            return Ok(persons);
+            // todo: | Role ve Team bilgilerinin gelebilmesi için Generic Repository'e eklememiz gereken konunun araştırılarak bulunup eklenmesi
+                // (Eager Loading?)
+            
+            //var persons = await _personRepository.GetAllAsync();
+            var persons = await _personRepository.GetAllAsync(p => p.Role, p => p.Team);
+
+            // todo: | Bu kısım yerine AutoMapper araştırılması:
+
+            //List<PersonsResponseDto> result = [];
+
+            //foreach (var item in persons)
+            //{
+            //    result.Add(new PersonsResponseDto
+            //    {
+            //        Age = item.Age,
+            //        First_Name = item.First_Name,
+            //        Last_Name = item.Last_Name,
+            //        Nationality = item.Nationality,
+            //        Person_Id = item.Person_Id
+            //    });
+            //}
+
+            var result = _mapper.Map<List<PersonsResponseDto>>(persons);
+
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
@@ -35,7 +60,7 @@ namespace CrashView.Controllers
             return Ok(person);
         }
 
-        [HttpPost]
+        [HttpPost("PostPerson")]
         public async Task<ActionResult<Person>> PostPerson(Person person)
         {
             await _personRepository.InsertAsync(person);

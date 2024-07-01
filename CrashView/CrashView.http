@@ -1,6 +1,65 @@
-@CrashView_HostAddress = http://localhost:5140
+@CrashView_HostAddress = https://localhost:7238
 
 GET {{CrashView_HostAddress}}/weatherforecast/
 Accept: application/json
+
+###
+
+GET {{CrashView_HostAddress}}/api/person
+
+###
+
+GET {{CrashView_HostAddress}}/api/role
+
+###
+
+POST {{CrashView_HostAddress}}/api/Person/PostPerson
+Content-Type: application/json
+
+{
+  "first_Name": "Lance",
+  "last_Name": "Stroll",
+  "age": 30,
+  "nationality": "Canada",
+  "role_ID": 1,  
+  "role": {
+    "role_ID": 1,
+    "role_Name": "Driver"
+  },
+  "team_ID": 11,  
+  "team": {
+    "team_ID": 1,
+    "team_Name": "Aston Martin",
+    "base_Country": "England"
+  }
+}
+
+###
+
+GET {{CrashView_HostAddress}}/api/team
+
+###
+
+POST {{CrashView_HostAddress}}/api/team
+Content-Type: application/json
+
+{
+  "team_Name": "Aston Martin",
+  "base_Country": "England"
+}
+
+###
+
+
+GET {{CrashView_HostAddress}}/api/team
+
+###
+
+POST {{CrashView_HostAddress}}/api/role
+Content-Type: application/json
+
+{
+  
+}
 
 ###

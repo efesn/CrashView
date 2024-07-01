@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace CrashView.Data
+﻿namespace CrashView.Data
 {
     public class UnitOfWork : IUnitOfWork
     {

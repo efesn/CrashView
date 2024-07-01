@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic;
 
 namespace CrashView.Entities
 {
@@ -24,17 +22,13 @@ namespace CrashView.Entities
         [MaxLength(50)]
         public string Nationality { get; set; }
 
-        [Required]
-        public int Role_ID { get; set; }
-
-        public int? Team_ID { get; set; }
-
-        [ForeignKey("Role_ID")]
+        public int Role_ID { get; set; }  
         public Role Role { get; set; }
 
-        [ForeignKey("Team_ID")]
+        public int? Team_ID { get; set; }  
         public Team Team { get; set; }
     }
+
 
     public class Role
     {
@@ -44,8 +38,6 @@ namespace CrashView.Entities
         [Required]
         [MaxLength(50)]
         public string Role_Name { get; set; }
-
-        public ICollection<Person> Persons { get; set; } = new List<Person>();
     }
 
     public class Team
@@ -60,7 +52,5 @@ namespace CrashView.Entities
         [Required]
         [MaxLength(50)]
         public string Base_Country { get; set; }
-
-        public ICollection<Person> Persons { get; set; } = new List<Person>();
     }
 }

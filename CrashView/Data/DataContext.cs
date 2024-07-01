@@ -15,13 +15,13 @@ public class DataContext : DbContext
     {
         modelBuilder.Entity<Person>()
             .HasOne(p => p.Role)
-            .WithMany(r => r.Persons)
+            .WithMany() 
             .HasForeignKey(p => p.Role_ID)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Person>()
             .HasOne(p => p.Team)
-            .WithMany(t => t.Persons)
+            .WithMany() 
             .HasForeignKey(p => p.Team_ID)
             .OnDelete(DeleteBehavior.Restrict);
     }

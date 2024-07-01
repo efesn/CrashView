@@ -1,40 +1,57 @@
-﻿using CrashView.Data.Repositories;
+﻿using CrashView.Data;
+using CrashView.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
     private readonly DataContext _context;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly DbSet<T> _dbSet;
 
-    public GenericRepository(DataContext context)
+    public GenericRepository(DataContext context, IUnitOfWork unitOfWork)
     {
         _context = context;
+        _unitOfWork = unitOfWork;
+        _dbSet = context.Set<T>();
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync()
+    public async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
     {
-        return await _context.Set<T>().ToListAsync();
+        IQueryable<T> query = _dbSet;
+
+        foreach (var include in includes)
+        {
+            query = query.Include(include);
+        }
+
+        return await query.ToListAsync();
     }
 
     public async Task<T> GetByIdAsync(int id)
     {
-        return await _context.Set<T>().FindAsync(id);
+        return await _dbSet.FindAsync(id);
     }
 
     public async Task InsertAsync(T entity)
     {
-        await _context.Set<T>().AddAsync(entity);
+        await _dbSet.AddAsync(entity);
+        await _unitOfWork.CompleteAsync();
     }
 
     public async Task UpdateAsync(T entity)
     {
-        _context.Set<T>().Update(entity);
+        _dbSet.Update(entity);
+        await _unitOfWork.CompleteAsync();
     }
 
     public async Task DeleteAsync(int id)
     {
         var entity = await GetByIdAsync(id);
-        _context.Set<T>().Remove(entity);
+        if (entity != null)
+        {
+            _dbSet.Remove(entity);
+            await _unitOfWork.CompleteAsync();
+        }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CrashView.Entities;
 using CrashView.Data.Repositories;
-using CrashView.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace CrashView.Controllers
 {
@@ -13,12 +11,10 @@ namespace CrashView.Controllers
     public class TeamController : ControllerBase
     {
         private readonly IGenericRepository<Team> _teamRepository;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public TeamController(IGenericRepository<Team> teamRepository, IUnitOfWork unitOfWork)
+        public TeamController(IGenericRepository<Team> teamRepository)
         {
             _teamRepository = teamRepository;
-            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -43,7 +39,6 @@ namespace CrashView.Controllers
         public async Task<ActionResult<Team>> PostTeam(Team team)
         {
             await _teamRepository.InsertAsync(team);
-            await _unitOfWork.CompleteAsync();
             return CreatedAtAction(nameof(GetTeam), new { id = team.Team_ID }, team);
         }
 
@@ -54,24 +49,7 @@ namespace CrashView.Controllers
             {
                 return BadRequest();
             }
-
             await _teamRepository.UpdateAsync(team);
-            try
-            {
-                await _unitOfWork.CompleteAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await TeamExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
             return NoContent();
         }
 
@@ -79,14 +57,7 @@ namespace CrashView.Controllers
         public async Task<IActionResult> DeleteTeam(int id)
         {
             await _teamRepository.DeleteAsync(id);
-            await _unitOfWork.CompleteAsync();
             return NoContent();
-        }
-
-        private async Task<bool> TeamExists(int id)
-        {
-            var team = await _teamRepository.GetByIdAsync(id);
-            return team != null;
         }
     }
 }
