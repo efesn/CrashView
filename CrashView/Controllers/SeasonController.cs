@@ -9,46 +9,46 @@ namespace CrashView.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RoleController : ControllerBase
+    public class SeasonController : ControllerBase
     {
         private readonly DataContext _context;
 
-        public RoleController(DataContext context)
+        public SeasonController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: api/Role
+        // GET: api/Season
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Role>>> GetRoles()
+        public async Task<ActionResult<IEnumerable<Season>>> GetSeasons()
         {
-            return await _context.Roles.ToListAsync();
+            return await _context.Season.ToListAsync();
         }
 
-        // GET: api/Role/5
+        // GET: api/Season/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Role>> GetRole(int id)
+        public async Task<ActionResult<Season>> GetSeason(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
+            var season = await _context.Season.FindAsync(id);
 
-            if (role == null)
+            if (season == null)
             {
                 return NotFound();
             }
 
-            return role;
+            return season;
         }
 
-        // PUT: api/Role/5
+        // PUT: api/Season/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRole(int id, Role role)
+        public async Task<IActionResult> PutSeason(int id, Season season)
         {
-            if (id != role.Role_ID)
+            if (id != season.Season_ID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(role).State = EntityState.Modified;
+            _context.Entry(season).State = EntityState.Modified;
 
             try
             {
@@ -56,7 +56,7 @@ namespace CrashView.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RoleExists(id))
+                if (!SeasonExists(id))
                 {
                     return NotFound();
                 }
@@ -69,35 +69,35 @@ namespace CrashView.Controllers
             return NoContent();
         }
 
-        // POST: api/Role
+        // POST: api/Season
         [HttpPost]
-        public async Task<ActionResult<Role>> PostRole(Role role)
+        public async Task<ActionResult<Season>> PostSeason(Season season)
         {
-            _context.Roles.Add(role);
+            _context.Season.Add(season);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetRole), new { id = role.Role_ID }, role);
+            return CreatedAtAction(nameof(GetSeason), new { id = season.Season_ID }, season);
         }
 
-        // DELETE: api/Role/5
+        // DELETE: api/Season/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRole(int id)
+        public async Task<IActionResult> DeleteSeason(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
-            if (role == null)
+            var season = await _context.Season.FindAsync(id);
+            if (season == null)
             {
                 return NotFound();
             }
 
-            _context.Roles.Remove(role);
+            _context.Season.Remove(season);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool RoleExists(int id)
+        private bool SeasonExists(int id)
         {
-            return _context.Roles.Any(e => e.Role_ID == id);
+            return _context.Season.Any(e => e.Season_ID == id);
         }
     }
 }

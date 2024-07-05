@@ -1,4 +1,7 @@
-﻿namespace CrashView.Dto.Response
+﻿using CrashView.Entities;
+using System.ComponentModel.DataAnnotations;
+
+namespace CrashView.Dto.Request
 {
     public class PersonsResponseDto
     {
@@ -7,11 +10,7 @@
         public string Last_Name { get; set; }
         public int Age { get; set; }
         public string Nationality { get; set; }
-
-        //public int Role_ID { get; set; }
-        //public Role Role { get; set; }
-
-        //public int? Team_ID { get; set; }
-        //public Team Team { get; set; }
+        public int Role_ID { get; set; }
     }
 }
+

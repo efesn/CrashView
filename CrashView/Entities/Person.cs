@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CrashView.Entities
 {
@@ -22,35 +23,14 @@ namespace CrashView.Entities
         [MaxLength(50)]
         public string Nationality { get; set; }
 
-        public int Role_ID { get; set; }  
+        public int Role_ID { get; set; }
+        
+        [ForeignKey("Role_ID")]
         public Role Role { get; set; }
 
-        public int? Team_ID { get; set; }  
+        public int? Team_ID { get; set; }
+        
+        [ForeignKey("Team_ID")]
         public Team Team { get; set; }
-    }
-
-
-    public class Role
-    {
-        [Key]
-        public int Role_ID { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string Role_Name { get; set; }
-    }
-
-    public class Team
-    {
-        [Key]
-        public int Team_ID { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string Team_Name { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string Base_Country { get; set; }
     }
 }

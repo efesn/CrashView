@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrashView.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240704163009_ScaffSecond")]
+    partial class ScaffSecond
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -107,7 +110,7 @@ namespace CrashView.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PersonTeamHistory_ID"));
 
-                    b.Property<DateTime>("End_Date")
+                    b.Property<DateTime?>("End_Date")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Person_ID")
@@ -239,7 +242,7 @@ namespace CrashView.Migrations
 
                     b.HasKey("Season_ID");
 
-                    b.ToTable("Seasons");
+                    b.ToTable("Season");
                 });
 
             modelBuilder.Entity("CrashView.Entities.Team", b =>

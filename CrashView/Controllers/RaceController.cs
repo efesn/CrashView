@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,46 +10,46 @@ namespace CrashView.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RoleController : ControllerBase
+    public class RaceController : ControllerBase
     {
         private readonly DataContext _context;
 
-        public RoleController(DataContext context)
+        public RaceController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: api/Role
+        // GET: api/Race
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Role>>> GetRoles()
+        public async Task<ActionResult<IEnumerable<Race>>> GetRaces()
         {
-            return await _context.Roles.ToListAsync();
+            return await _context.Races.ToListAsync();
         }
 
-        // GET: api/Role/5
+        // GET: api/Race/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Role>> GetRole(int id)
+        public async Task<ActionResult<Race>> GetRace(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
+            var race = await _context.Races.FindAsync(id);
 
-            if (role == null)
+            if (race == null)
             {
                 return NotFound();
             }
 
-            return role;
+            return race;
         }
 
-        // PUT: api/Role/5
+        // PUT: api/Race/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRole(int id, Role role)
+        public async Task<IActionResult> PutRace(int id, [FromBody] Race race)
         {
-            if (id != role.Role_ID)
+            if (id != race.Race_ID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(role).State = EntityState.Modified;
+            _context.Entry(race).State = EntityState.Modified;
 
             try
             {
@@ -56,7 +57,7 @@ namespace CrashView.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RoleExists(id))
+                if (!RaceExists(id))
                 {
                     return NotFound();
                 }
@@ -69,35 +70,35 @@ namespace CrashView.Controllers
             return NoContent();
         }
 
-        // POST: api/Role
+        // POST: api/Race
         [HttpPost]
-        public async Task<ActionResult<Role>> PostRole(Role role)
+        public async Task<ActionResult<Race>> PostRace([FromBody] Race race)
         {
-            _context.Roles.Add(role);
+            _context.Races.Add(race);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetRole), new { id = role.Role_ID }, role);
+            return CreatedAtAction(nameof(GetRace), new { id = race.Race_ID }, race);
         }
 
-        // DELETE: api/Role/5
+        // DELETE: api/Race/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRole(int id)
+        public async Task<IActionResult> DeleteRace(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
-            if (role == null)
+            var race = await _context.Races.FindAsync(id);
+            if (race == null)
             {
                 return NotFound();
             }
 
-            _context.Roles.Remove(role);
+            _context.Races.Remove(race);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool RoleExists(int id)
+        private bool RaceExists(int id)
         {
-            return _context.Roles.Any(e => e.Role_ID == id);
+            return _context.Races.Any(e => e.Race_ID == id);
         }
     }
 }

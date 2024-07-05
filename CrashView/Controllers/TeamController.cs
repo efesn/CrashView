@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CrashView.Entities;
-using CrashView.Data.Repositories;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using CrashView.Entities;
 
 namespace CrashView.Controllers
 {
@@ -10,38 +11,35 @@ namespace CrashView.Controllers
     [ApiController]
     public class TeamController : ControllerBase
     {
-        private readonly IGenericRepository<Team> _teamRepository;
+        private readonly DataContext _context;
 
-        public TeamController(IGenericRepository<Team> teamRepository)
+        public TeamController(DataContext context)
         {
-            _teamRepository = teamRepository;
+            _context = context;
         }
 
+        // GET: api/Team
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Team>>> GetTeams()
         {
-            var teams = await _teamRepository.GetAllAsync();
-            return Ok(teams);
+            return await _context.Teams.ToListAsync();
         }
 
+        // GET: api/Team/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Team>> GetTeam(int id)
         {
-            var team = await _teamRepository.GetByIdAsync(id);
+            var team = await _context.Teams.FindAsync(id);
+
             if (team == null)
             {
                 return NotFound();
             }
-            return Ok(team);
+
+            return team;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Team>> PostTeam(Team team)
-        {
-            await _teamRepository.InsertAsync(team);
-            return CreatedAtAction(nameof(GetTeam), new { id = team.Team_ID }, team);
-        }
-
+        // PUT: api/Team/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTeam(int id, Team team)
         {
@@ -49,15 +47,57 @@ namespace CrashView.Controllers
             {
                 return BadRequest();
             }
-            await _teamRepository.UpdateAsync(team);
+
+            _context.Entry(team).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TeamExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
         }
 
+        // POST: api/Team
+        [HttpPost]
+        public async Task<ActionResult<Team>> PostTeam(Team team)
+        {
+            _context.Teams.Add(team);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetTeam), new { id = team.Team_ID }, team);
+        }
+
+        // DELETE: api/Team/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTeam(int id)
         {
-            await _teamRepository.DeleteAsync(id);
+            var team = await _context.Teams.FindAsync(id);
+            if (team == null)
+            {
+                return NotFound();
+            }
+
+            _context.Teams.Remove(team);
+            await _context.SaveChangesAsync();
+
             return NoContent();
+        }
+
+        private bool TeamExists(int id)
+        {
+            return _context.Teams.Any(e => e.Team_ID == id);
         }
     }
 }

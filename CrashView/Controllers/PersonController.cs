@@ -1,7 +1,10 @@
-﻿using CrashView.Data.Repositories;
-using CrashView.Dto.Response;
-using CrashView.Entities;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using CrashView.Entities;
+using CrashView.Dto.Request;
 using AutoMapper;
 
 namespace CrashView.Controllers
@@ -10,79 +13,120 @@ namespace CrashView.Controllers
     [ApiController]
     public class PersonController : ControllerBase
     {
-        private readonly IGenericRepository<Person> _personRepository;
+        private readonly DataContext _context;
         private readonly IMapper _mapper;
 
-        public PersonController(IGenericRepository<Person> personRepository, IMapper mapper)
+        public PersonController(DataContext context, IMapper mapper)
         {
-            _personRepository = personRepository;
+            _context = context;
             _mapper = mapper;
         }
 
+        // GET: api/Person
         [HttpGet]
-        public async Task<ActionResult<List<PersonsResponseDto>>> GetPersons()
+        public async Task<ActionResult<IEnumerable<PersonsResponseDto>>> GetPersons()
         {
-            // todo: | Role ve Team bilgilerinin gelebilmesi için Generic Repository'e eklememiz gereken konunun araştırılarak bulunup eklenmesi
-                // (Eager Loading?)
-            
-            //var persons = await _personRepository.GetAllAsync();
-            var persons = await _personRepository.GetAllAsync(p => p.Role, p => p.Team);
+            var persons = await _context.Persons
+                .Include(p => p.Role)
+                .Include(p => p.Team)
+                .ToListAsync();
 
-            // todo: | Bu kısım yerine AutoMapper araştırılması:
+            var response = _mapper.Map<List<PersonsResponseDto>>(persons);
 
-            //List<PersonsResponseDto> result = [];
-
-            //foreach (var item in persons)
-            //{
-            //    result.Add(new PersonsResponseDto
-            //    {
-            //        Age = item.Age,
-            //        First_Name = item.First_Name,
-            //        Last_Name = item.Last_Name,
-            //        Nationality = item.Nationality,
-            //        Person_Id = item.Person_Id
-            //    });
-            //}
-
-            var result = _mapper.Map<List<PersonsResponseDto>>(persons);
-
-            return Ok(result);
+            return Ok(response);
         }
 
+        // GET: api/Person/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Person>> GetPerson(int id)
+        public async Task<ActionResult<PersonsResponseDto>> GetPerson(int id)
         {
-            var person = await _personRepository.GetByIdAsync(id);
+            var person = await _context.Persons
+                .Include(p => p.Role)
+                .Include(p => p.Team)
+                .FirstOrDefaultAsync(p => p.Person_Id == id);
+
             if (person == null)
             {
                 return NotFound();
             }
-            return Ok(person);
+
+            var response = _mapper.Map<PersonsResponseDto>(person);
+
+            return Ok(response);
         }
 
-        [HttpPost("PostPerson")]
-        public async Task<ActionResult<Person>> PostPerson(Person person)
-        {
-            await _personRepository.InsertAsync(person);
-            return CreatedAtAction(nameof(GetPerson), new { id = person.Person_Id }, person);
-        }
-
+        // PUT: api/Person/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPerson(int id, Person person)
+        public async Task<IActionResult> PutPerson(int id, [FromBody] PersonsResponseDto request)
         {
-            if (id != person.Person_Id)
+            if (id != request.Person_Id)
             {
                 return BadRequest();
             }
-            await _personRepository.UpdateAsync(person);
+
+            var person = await _context.Persons.FindAsync(id);
+
+            if (person == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(request, person);
+
+            _context.Entry(person).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PersonExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
         }
 
+        // POST: api/Person
+        [HttpPost]
+        public async Task<ActionResult<PersonsResponseDto>> PostPerson(PersonsResponseDto request)
+        {
+            var person = _mapper.Map<Person>(request);
+
+            _context.Persons.Add(person);
+            await _context.SaveChangesAsync();
+
+            var response = _mapper.Map<PersonsResponseDto>(person);
+
+            return CreatedAtAction(nameof(GetPerson), new { id = person.Person_Id }, response);
+        }
+
+        // DELETE: api/Person/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePerson(int id)
         {
-            await _personRepository.DeleteAsync(id);
+            var person = await _context.Persons.FindAsync(id);
+            if (person == null)
+            {
+                return NotFound();
+            }
+
+            _context.Persons.Remove(person);
+            await _context.SaveChangesAsync();
+
             return NoContent();
+        }
+
+        private bool PersonExists(int id)
+        {
+            return _context.Persons.Any(e => e.Person_Id == id);
         }
     }
 }

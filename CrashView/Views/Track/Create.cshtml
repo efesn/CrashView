@@ -1,0 +1,79 @@
+@model CrashView.Entities.Track
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Create</title>
+</head>
+<body>
+
+<h4>Track</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Track_Name" class="control-label"></label>
+                <input asp-for="Track_Name" class="form-control" />
+                <span asp-validation-for="Track_Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Continent" class="control-label"></label>
+                <input asp-for="Continent" class="form-control" />
+                <span asp-validation-for="Continent" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Country" class="control-label"></label>
+                <input asp-for="Country" class="form-control" />
+                <span asp-validation-for="Country" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="City" class="control-label"></label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Number_Of_Laps" class="control-label"></label>
+                <input asp-for="Number_Of_Laps" class="form-control" />
+                <span asp-validation-for="Number_Of_Laps" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Fastest_Lap_Record" class="control-label"></label>
+                <input asp-for="Fastest_Lap_Record" class="form-control" />
+                <span asp-validation-for="Fastest_Lap_Record" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Track_Length_km" class="control-label"></label>
+                <input asp-for="Track_Length_km" class="form-control" />
+                <span asp-validation-for="Track_Length_km" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Total_Race_Length_km" class="control-label"></label>
+                <input asp-for="Total_Race_Length_km" class="form-control" />
+                <span asp-validation-for="Total_Race_Length_km" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Audience_Capacity" class="control-label"></label>
+                <input asp-for="Audience_Capacity" class="form-control" />
+                <span asp-validation-for="Audience_Capacity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+</body>
+</html>

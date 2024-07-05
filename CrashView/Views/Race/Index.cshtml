@@ -1,0 +1,61 @@
+@model IEnumerable<CrashView.Entities.Race>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Race_Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Season_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Track_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Race_Date)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Race_Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Season_ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Track_ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Race_Date)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Race_ID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Race_ID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Race_ID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</body>
+</html>

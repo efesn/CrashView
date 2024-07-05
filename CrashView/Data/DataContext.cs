@@ -1,4 +1,4 @@
-﻿using CrashView.Entities;
+using CrashView.Entities;
 using Microsoft.EntityFrameworkCore;
 
 public class DataContext : DbContext
@@ -10,6 +10,15 @@ public class DataContext : DbContext
     public DbSet<Person> Persons { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<Team> Teams { get; set; }
+    public DbSet<PersonTeamHistory> PersonTeams { get; set; }
+    public DbSet<Track> Tracks { get; set; }
+    public DbSet<Season> Season { get; set; }
+    public DbSet<Race> Races { get; set; }
+    public DbSet<RaceResult> RaceResults { get; set; }
+    public DbSet<Crash> Crashes { get; set; }
+
+
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,4 +34,8 @@ public class DataContext : DbContext
             .HasForeignKey(p => p.Team_ID)
             .OnDelete(DeleteBehavior.Restrict);
     }
+
+public DbSet<CrashView.Entities.PersonTeamHistory> PersonTeamHistory { get; set; } = default!;
+
+public DbSet<CrashView.Entities.Track> Track { get; set; } = default!;
 }

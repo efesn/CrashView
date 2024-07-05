@@ -1,0 +1,91 @@
+@model IEnumerable<CrashView.Entities.Track>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Track_Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Continent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Country)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Number_Of_Laps)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fastest_Lap_Record)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Track_Length_km)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Total_Race_Length_km)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Audience_Capacity)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Track_Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Continent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Country)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Number_Of_Laps)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fastest_Lap_Record)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Track_Length_km)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Total_Race_Length_km)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Audience_Capacity)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Track_ID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Track_ID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Track_ID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</body>
+</html>

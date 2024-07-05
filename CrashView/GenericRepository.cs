@@ -17,6 +17,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     }
 
     public async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
+        //todo: ya parametrik ya da ayrı methodlar açılacak 
     {
         IQueryable<T> query = _dbSet;
 

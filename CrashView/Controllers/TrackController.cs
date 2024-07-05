@@ -9,46 +9,46 @@ namespace CrashView.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RoleController : ControllerBase
+    public class TrackController : ControllerBase
     {
         private readonly DataContext _context;
 
-        public RoleController(DataContext context)
+        public TrackController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: api/Role
+        // GET: api/Track
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Role>>> GetRoles()
+        public async Task<ActionResult<IEnumerable<Track>>> GetTracks()
         {
-            return await _context.Roles.ToListAsync();
+            return await _context.Track.ToListAsync();
         }
 
-        // GET: api/Role/5
+        // GET: api/Track/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Role>> GetRole(int id)
+        public async Task<ActionResult<Track>> GetTrack(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
+            var track = await _context.Track.FindAsync(id);
 
-            if (role == null)
+            if (track == null)
             {
                 return NotFound();
             }
 
-            return role;
+            return track;
         }
 
-        // PUT: api/Role/5
+        // PUT: api/Track/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRole(int id, Role role)
+        public async Task<IActionResult> PutTrack(int id, Track track)
         {
-            if (id != role.Role_ID)
+            if (id != track.Track_ID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(role).State = EntityState.Modified;
+            _context.Entry(track).State = EntityState.Modified;
 
             try
             {
@@ -56,7 +56,7 @@ namespace CrashView.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RoleExists(id))
+                if (!TrackExists(id))
                 {
                     return NotFound();
                 }
@@ -69,35 +69,35 @@ namespace CrashView.Controllers
             return NoContent();
         }
 
-        // POST: api/Role
+        // POST: api/Track
         [HttpPost]
-        public async Task<ActionResult<Role>> PostRole(Role role)
+        public async Task<ActionResult<Track>> PostTrack(Track track)
         {
-            _context.Roles.Add(role);
+            _context.Track.Add(track);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetRole), new { id = role.Role_ID }, role);
+            return CreatedAtAction(nameof(GetTrack), new { id = track.Track_ID }, track);
         }
 
-        // DELETE: api/Role/5
+        // DELETE: api/Track/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRole(int id)
+        public async Task<IActionResult> DeleteTrack(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
-            if (role == null)
+            var track = await _context.Track.FindAsync(id);
+            if (track == null)
             {
                 return NotFound();
             }
 
-            _context.Roles.Remove(role);
+            _context.Track.Remove(track);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool RoleExists(int id)
+        private bool TrackExists(int id)
         {
-            return _context.Roles.Any(e => e.Role_ID == id);
+            return _context.Track.Any(e => e.Track_ID == id);
         }
     }
 }

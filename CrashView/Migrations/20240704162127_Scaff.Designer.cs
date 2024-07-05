@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrashView.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240704162127_Scaff")]
+    partial class Scaff
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -107,10 +110,14 @@ namespace CrashView.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PersonTeamHistory_ID"));
 
-                    b.Property<DateTime>("End_Date")
+                    b.Property<DateTime?>("End_Date")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Person_ID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Person_Id")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Start_Date")
@@ -119,11 +126,14 @@ namespace CrashView.Migrations
                     b.Property<int>("Team_ID")
                         .HasColumnType("int");
 
+                    b.Property<int>("Team_ID1")
+                        .HasColumnType("int");
+
                     b.HasKey("PersonTeamHistory_ID");
 
-                    b.HasIndex("Person_ID");
+                    b.HasIndex("Person_Id");
 
-                    b.HasIndex("Team_ID");
+                    b.HasIndex("Team_ID1");
 
                     b.ToTable("PersonTeamHistory");
                 });
@@ -354,13 +364,13 @@ namespace CrashView.Migrations
                 {
                     b.HasOne("CrashView.Entities.Person", "Person")
                         .WithMany()
-                        .HasForeignKey("Person_ID")
+                        .HasForeignKey("Person_Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CrashView.Entities.Team", "Team")
                         .WithMany()
-                        .HasForeignKey("Team_ID")
+                        .HasForeignKey("Team_ID1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
