@@ -11,6 +11,7 @@ namespace CrashView.Dto.Request
         public int Age { get; set; }
         public string Nationality { get; set; }
         public int Role_ID { get; set; }
+        public int Team_ID { get; set; }
     }
 }
 
