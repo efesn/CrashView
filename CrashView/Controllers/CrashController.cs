@@ -1,10 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CrashView.Entities;
+using CrashView.Dto.Request;
+using CrashView.Dto.Response;
 
 namespace CrashView.Controllers
 {
@@ -13,22 +15,26 @@ namespace CrashView.Controllers
     public class CrashController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public CrashController(DataContext context)
+        public CrashController(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Crash
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Crash>>> GetCrashes()
+        public async Task<ActionResult<IEnumerable<CrashResponseDto>>> GetCrashes()
         {
-            return await _context.Crashes.ToListAsync();
+            var crashes = await _context.Crashes.ToListAsync();
+            var crashDtos = _mapper.Map<IEnumerable<CrashResponseDto>>(crashes);
+            return Ok(crashDtos);
         }
 
         // GET: api/Crash/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Crash>> GetCrash(int id)
+        public async Task<ActionResult<CrashResponseDto>> GetCrash(int id)
         {
             var crash = await _context.Crashes.FindAsync(id);
 
@@ -37,19 +43,20 @@ namespace CrashView.Controllers
                 return NotFound();
             }
 
-            return crash;
+            var crashDto = _mapper.Map<CrashResponseDto>(crash);
+            return Ok(crashDto);
         }
 
         // PUT: api/Crash/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCrash(int id, [FromBody] Crash crash)
+        public async Task<IActionResult> PutCrash(int id, [FromBody] CrashRequestDto crashRequestDto)
         {
-            if (id != crash.Crash_ID)
+            if (id != crashRequestDto.Crash_ID)
             {
                 return BadRequest();
             }
 
+            var crash = _mapper.Map<Crash>(crashRequestDto);
             _context.Entry(crash).State = EntityState.Modified;
 
             try
@@ -72,14 +79,15 @@ namespace CrashView.Controllers
         }
 
         // POST: api/Crash
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
         [HttpPost]
-        public async Task<ActionResult<Crash>> PostCrash([FromBody] Crash crash)
+        public async Task<ActionResult<CrashResponseDto>> PostCrash([FromBody] CrashRequestDto crashRequestDto)
         {
+            var crash = _mapper.Map<Crash>(crashRequestDto);
             _context.Crashes.Add(crash);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetCrash), new { id = crash.Crash_ID }, crash);
+            var crashDto = _mapper.Map<CrashResponseDto>(crash);
+            return CreatedAtAction(nameof(GetCrash), new { id = crashDto.Crash_ID }, crashDto);
         }
 
         // DELETE: api/Crash/5

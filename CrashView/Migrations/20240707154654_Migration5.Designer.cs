@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrashView.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240707154654_Migration5")]
+    partial class Migration5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,14 +47,16 @@ namespace CrashView.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Race_ID")
-                        .HasColumnType("int")
-                        .HasColumnName("Race_ID");
+                        .HasColumnType("int");
+
+                    b.Property<int>("Race_ID1")
+                        .HasColumnType("int");
 
                     b.HasKey("Crash_ID");
 
                     b.HasIndex("Person_Id");
 
-                    b.HasIndex("Race_ID");
+                    b.HasIndex("Race_ID1");
 
                     b.ToTable("Crashes");
                 });
@@ -322,7 +327,7 @@ namespace CrashView.Migrations
 
                     b.HasOne("CrashView.Entities.Race", "Race")
                         .WithMany()
-                        .HasForeignKey("Race_ID")
+                        .HasForeignKey("Race_ID1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
