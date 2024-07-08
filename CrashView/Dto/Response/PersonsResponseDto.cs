@@ -12,6 +12,9 @@ namespace CrashView.Dto.Request
         public string Nationality { get; set; }
         public int Role_ID { get; set; }
         public int Team_ID { get; set; }
+
+        //public Role Role { get; set; }
+        //public Team Team { get; set; }
     }
 }
 

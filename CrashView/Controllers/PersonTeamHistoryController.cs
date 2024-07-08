@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CrashView.Entities;
+using CrashView.Dto.Request;
+using AutoMapper;
 
 namespace CrashView.Controllers
 {
@@ -13,41 +11,57 @@ namespace CrashView.Controllers
     public class PersonTeamHistoryController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public PersonTeamHistoryController(DataContext context)
+        public PersonTeamHistoryController(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/PersonTeamHistory
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PersonTeamHistory>>> GetPersonTeamHistory()
+        public async Task<ActionResult<IEnumerable<PersonTeamHistoryDto>>> GetPersonTeamHistory()
         {
-            return await _context.PersonTeamHistory.ToListAsync();
+            var personTeamHistories = await _context.PersonTeamHistory
+                .Include(pth => pth.Person)
+                .Include(pth => pth.Team)
+                .ToListAsync();
+
+            var response = _mapper.Map<List<PersonTeamHistoryDto>>(personTeamHistories);
+
+            return Ok(response);
         }
 
         // GET: api/PersonTeamHistory/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PersonTeamHistory>> GetPersonTeamHistory(int id)
+        public async Task<ActionResult<PersonTeamHistoryDto>> GetPersonTeamHistory(int id)
         {
-            var personTeamHistory = await _context.PersonTeamHistory.FindAsync(id);
+            var personTeamHistory = await _context.PersonTeamHistory
+                .Include(pth => pth.Person)
+                .Include(pth => pth.Team)
+                .FirstOrDefaultAsync(pth => pth.PersonTeamHistory_ID == id);
 
             if (personTeamHistory == null)
             {
                 return NotFound();
             }
 
-            return personTeamHistory;
+            var response = _mapper.Map<PersonTeamHistoryDto>(personTeamHistory);
+
+            return Ok(response);
         }
 
         // PUT: api/PersonTeamHistory/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPersonTeamHistory(int id, [FromBody] PersonTeamHistory personTeamHistory)
+        public async Task<IActionResult> PutPersonTeamHistory(int id, [FromBody] PersonTeamHistoryDto personTeamHistoryDto)
         {
-            if (id != personTeamHistory.PersonTeamHistory_ID)
+            if (id != personTeamHistoryDto.PersonTeamHistory_ID)
             {
                 return BadRequest();
             }
+
+            var personTeamHistory = _mapper.Map<PersonTeamHistory>(personTeamHistoryDto);
 
             _context.Entry(personTeamHistory).State = EntityState.Modified;
 
@@ -72,12 +86,16 @@ namespace CrashView.Controllers
 
         // POST: api/PersonTeamHistory
         [HttpPost]
-        public async Task<ActionResult<PersonTeamHistory>> PostPersonTeamHistory([FromBody] PersonTeamHistory personTeamHistory)
+        public async Task<ActionResult<PersonTeamHistoryDto>> PostPersonTeamHistory([FromBody] PersonTeamHistoryDto personTeamHistoryDto)
         {
+            var personTeamHistory = _mapper.Map<PersonTeamHistory>(personTeamHistoryDto);
+
             _context.PersonTeamHistory.Add(personTeamHistory);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPersonTeamHistory), new { id = personTeamHistory.PersonTeamHistory_ID }, personTeamHistory);
+            var responseDto = _mapper.Map<PersonTeamHistoryDto>(personTeamHistory);
+
+            return CreatedAtAction(nameof(GetPersonTeamHistory), new { id = responseDto.PersonTeamHistory_ID }, responseDto);
         }
 
         // DELETE: api/PersonTeamHistory/5
