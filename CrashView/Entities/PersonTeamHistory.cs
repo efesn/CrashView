@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,7 +13,10 @@ namespace CrashView.Entities
         public int Person_ID { get; set; }
         public int Team_ID { get; set; }
         public DateTime Start_Date { get; set; }
-        public DateTime End_Date { get; set; }
+        public DateTime? End_Date { get; set; }
+
+        [NotMapped]
+        public string EmploymentStatus { get; set; }
 
         [ForeignKey("Person_ID")]
         public virtual Person Person { get; set; }

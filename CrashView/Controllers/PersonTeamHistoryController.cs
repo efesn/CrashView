@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using CrashView.Entities;
 using CrashView.Dto.Request;
 using AutoMapper;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace CrashView.Controllers
 {

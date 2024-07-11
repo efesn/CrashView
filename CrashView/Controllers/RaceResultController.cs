@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CrashView.Entities;
 using CrashView.Dto.Request;
+using CrashView.Dto.Response;
 using AutoMapper;
 
 namespace CrashView.Controllers
@@ -24,16 +25,16 @@ namespace CrashView.Controllers
 
         // GET: api/RaceResult
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RaceResultDto>>> GetRaceResults()
+        public async Task<ActionResult<IEnumerable<RaceResultResponseDto>>> GetRaceResults()
         {
             var raceResults = await _context.RaceResults.ToListAsync();
-            var raceResultDtos = _mapper.Map<List<RaceResultDto>>(raceResults);
+            var raceResultDtos = _mapper.Map<List<RaceResultResponseDto>>(raceResults);
             return Ok(raceResultDtos);
         }
 
         // GET: api/RaceResult/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<RaceResultDto>> GetRaceResult(int id)
+        public async Task<ActionResult<RaceResultResponseDto>> GetRaceResult(int id)
         {
             var raceResult = await _context.RaceResults.FindAsync(id);
 
@@ -42,13 +43,13 @@ namespace CrashView.Controllers
                 return NotFound();
             }
 
-            var raceResultDto = _mapper.Map<RaceResultDto>(raceResult);
+            var raceResultDto = _mapper.Map<RaceResultResponseDto>(raceResult);
             return Ok(raceResultDto);
         }
 
         // PUT: api/RaceResult/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRaceResult(int id, [FromBody] RaceResultDto raceResultDto)
+        public async Task<IActionResult> PutRaceResult(int id, [FromBody] RaceResultResponseDto raceResultDto)
         {
             if (id != raceResultDto.RaceResult_ID)
             {
@@ -79,14 +80,17 @@ namespace CrashView.Controllers
 
         // POST: api/RaceResult
         [HttpPost]
-        public async Task<ActionResult<RaceResultDto>> PostRaceResult(RaceResultDto raceResultDto)
+        public async Task<ActionResult<RaceResultResponseDto>> PostRaceResult(RaceResultRequestDto raceResultDto)
         {
             var raceResult = _mapper.Map<RaceResult>(raceResultDto);
             _context.RaceResults.Add(raceResult);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetRaceResult), new { id = raceResult.RaceResult_ID }, _mapper.Map<RaceResultDto>(raceResult));
+            var raceResultResponseDto = _mapper.Map<RaceResultResponseDto>(raceResult);
+            return CreatedAtAction(nameof(GetRaceResult), new { id = raceResult.RaceResult_ID }, raceResultResponseDto);
         }
+
+
 
         // DELETE: api/RaceResult/5
         [HttpDelete("{id}")]
