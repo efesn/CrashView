@@ -1,3 +1,4 @@
+using CrashView;
 using CrashView.Data;
 using CrashView.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddScoped<TeamPointsResolver>();
+builder.Services.AddScoped<PointsResolver>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

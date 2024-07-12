@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CrashView.Entities;
+using CrashView.Dto.Response;
+using AutoMapper;
 
 namespace CrashView.Controllers
 {
@@ -12,22 +14,26 @@ namespace CrashView.Controllers
     public class TeamController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public TeamController(DataContext context)
+        public TeamController(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Team
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Team>>> GetTeams()
+        public async Task<ActionResult<IEnumerable<TeamResponseDto>>> GetTeams()
         {
-            return await _context.Teams.ToListAsync();
+            var teams = await _context.Teams.ToListAsync();
+            var teamDtos = _mapper.Map<List<TeamResponseDto>>(teams);
+            return Ok(teamDtos);
         }
 
         // GET: api/Team/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Team>> GetTeam(int id)
+        public async Task<ActionResult<TeamResponseDto>> GetTeam(int id)
         {
             var team = await _context.Teams.FindAsync(id);
 
@@ -36,7 +42,8 @@ namespace CrashView.Controllers
                 return NotFound();
             }
 
-            return team;
+            var teamDto = _mapper.Map<TeamResponseDto>(team);
+            return Ok(teamDto);
         }
 
         // PUT: api/Team/5
