@@ -10,5 +10,7 @@ namespace CrashView.Dto.Response
             public int Person_ID { get; set; }
             public DateTime CrashDate { get; set; }
             public string CrashDescription { get; set; }
+            public string Impact { get; set; }
+            public byte[] Crash_Video { get; set; }
     }
 }

@@ -7,22 +7,10 @@ namespace CrashView.Entities
     {
         [Key]
         public int Person_Id { get; set; }
-
-        [Required]
-        [MaxLength(50)]
         public string First_Name { get; set; }
-
-        [Required]
-        [MaxLength(50)]
         public string Last_Name { get; set; }
-
-        [Required]
         public int Age { get; set; }
-
-        [Required]
-        [MaxLength(50)]
         public string Nationality { get; set; }
-
         public int Role_ID { get; set; }
         
         [ForeignKey("Role_ID")]

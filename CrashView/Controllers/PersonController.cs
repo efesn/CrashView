@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using CrashView.Entities;
 using CrashView.Dto.Request;
 using AutoMapper;
+using CrashView.Validators;
+using FluentValidation;
 
 namespace CrashView.Controllers
 {
@@ -15,11 +17,13 @@ namespace CrashView.Controllers
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+        private readonly PersonValidator _validator;
 
         public PersonController(DataContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
+            _validator = new PersonValidator();
         }
 
         // GET: api/Person
@@ -96,8 +100,16 @@ namespace CrashView.Controllers
 
         // POST: api/Person
         [HttpPost]
-        public async Task<ActionResult<PersonsResponseDto>> PostPerson(PersonsResponseDto request)
+        public async Task<ActionResult<PersonsResponseDto>> PostPerson(PersonsRequestDto request)
         {
+            var validator = new PersonValidator();
+            var validationResult = validator.Validate(request);
+
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
+
             var person = _mapper.Map<Person>(request);
 
             _context.Persons.Add(person);

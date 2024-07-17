@@ -7,20 +7,13 @@ namespace CrashView.Entities
     {
         [Key]
         public int Race_ID { get; set; }
-
-        [Required]
-        [MaxLength(100)]
         public string Race_Name { get; set; }
 
-        [Required]
         [Column("Season_ID")]
         public int Season_ID { get; set; }
 
-        [Required]
         [Column("Track_ID")]
         public int Track_ID { get; set; }
-
-        [Required]
         public DateTime Race_Date { get; set; }
 
         [ForeignKey("Season_ID")]

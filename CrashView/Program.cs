@@ -1,6 +1,7 @@
 using CrashView;
 using CrashView.Data;
 using CrashView.Data.Repositories;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,8 @@ builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<TeamPointsResolver>();
 builder.Services.AddScoped<PointsResolver>();
+
+builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Program>());
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

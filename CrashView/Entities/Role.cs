@@ -6,9 +6,6 @@ namespace CrashView.Entities
     {
         [Key]
         public int Role_ID { get; set; }
-
-        [Required]
-        [MaxLength(50)]
         public string Role_Name { get; set; }
     }
 }

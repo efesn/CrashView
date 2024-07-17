@@ -13,11 +13,10 @@ namespace CrashView.Entities
         public int Race_ID { get; set; }
         [Required]
         public int Person_ID { get; set; }
-        [Required]
         public DateTime CrashDate { get; set; }
-
-        [MaxLength(300)]
         public string CrashDescription { get; set; }
+        public string Impact { get; set; }
+        public byte[] Crash_Video { get; set; }
 
         [ForeignKey("Race_ID")]
         public Race Race { get; set; }
@@ -25,3 +24,4 @@ namespace CrashView.Entities
         public Person Person { get; set; }
     }
 }
+

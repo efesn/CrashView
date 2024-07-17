@@ -12,7 +12,7 @@ namespace CrashView
             CreateMap<RaceResult, RaceResultResponseDto>();
 
             CreateMap<RaceResultRequestDto, RaceResult>()
-                .ForMember(dest => dest.PointsEarned, opt => opt.MapFrom<PointsResolver>())
+                .ForMember(dest => dest.PointsEarned, opt => opt.MapFrom<PointsResolver>()) 
                 .ForMember(dest => dest.Person_ID, opt => opt.MapFrom(src => src.Person_ID));
 
             CreateMap<RaceResultResponseDto, RaceResult>();

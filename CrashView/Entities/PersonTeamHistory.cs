@@ -9,7 +9,6 @@ namespace CrashView.Entities
     {
         [Key]
         public int PersonTeamHistory_ID { get; set; }
-
         public int Person_ID { get; set; }
         public int Team_ID { get; set; }
         public DateTime Start_Date { get; set; }
