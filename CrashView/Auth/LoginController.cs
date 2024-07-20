@@ -1,24 +1,23 @@
-﻿using CrashView.Auth;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 using System.Threading.Tasks;
+using BCrypt.Net;
+using Microsoft.CodeAnalysis.Scripting;
 
-namespace CrashView.Controllers
+namespace CrashView.Auth
 {
-    [Route("api/[controller]")]
+    [Route("api/auth/[controller]")]
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly DataContext _context;
         private readonly TokenService _tokenService;
         private readonly ILogger<LoginController> _logger;
 
-        public LoginController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, TokenService tokenService, ILogger<LoginController> logger)
+        public LoginController(DataContext context, TokenService tokenService, ILogger<LoginController> logger)
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
+            _context = context;
             _tokenService = tokenService;
             _logger = logger;
         }
@@ -26,28 +25,16 @@ namespace CrashView.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await _userManager.FindByNameAsync(model.Username);
-            if (user == null)
+            var user = _context.Users.SingleOrDefault(u => u.UserName == model.Username);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
             {
-                _logger.LogWarning("User not found: {Username}", model.Username);
+                _logger.LogWarning("Invalid login attempt for user: {Username}", model.Username);
                 return Unauthorized("Invalid login attempt");
             }
 
-            // Log the stored hashed password
-            var storedHashedPassword = user.PasswordHash;
-            _logger.LogInformation("Stored hashed password for user {Username}: {PasswordHash}", model.Username, storedHashedPassword);
-
-            var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
-
-            if (result.Succeeded)
-            {
-                var token = _tokenService.GenerateToken(user.Id);
-                _logger.LogInformation("User logged in: {Username}", model.Username);
-                return Ok(new { Token = token });
-            }
-
-            _logger.LogWarning("Invalid login attempt for user: {Username}", model.Username);
-            return Unauthorized("Invalid login attempt");
+            var token = _tokenService.GenerateToken(user.Id);
+            _logger.LogInformation("User logged in: {Username}", model.Username);
+            return Ok(new { Token = token });
         }
     }
 

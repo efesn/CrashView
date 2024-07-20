@@ -16,6 +16,7 @@ public class DataContext : DbContext
     public DbSet<Race> Races { get; set; }
     public DbSet<RaceResult> RaceResults { get; set; }
     public DbSet<Crash> Crashes { get; set; }
+    public DbSet<User> Users { get; set; }
 
 
 

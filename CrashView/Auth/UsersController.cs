@@ -1,25 +1,25 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CrashView.Data;
+using CrashView.Entities;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace CrashView.Auth
 {
-    [Route("api/[controller]")]
+    [Route("api/auth/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserContext _context;
 
-        public UsersController(UserManager<IdentityUser> userManager)
+        public UsersController(UserContext context)
         {
-            _userManager = userManager;
+            _context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<IdentityUser>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            var users = _userManager.Users;
+            var users = await _context.Users.ToListAsync();
             return Ok(users);
         }
     }

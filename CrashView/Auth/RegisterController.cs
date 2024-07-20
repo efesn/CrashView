@@ -1,32 +1,36 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using BCrypt.Net;
+using CrashView.Entities;
+using Microsoft.CodeAnalysis.Scripting;
 
 namespace CrashView.Auth
 {
-    [Route("api/[controller]")]
+    [Route("api/auth/[controller]")]
     [ApiController]
     public class RegisterController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly DataContext _context;
 
-        public RegisterController(UserManager<IdentityUser> userManager)
+        public RegisterController(DataContext context)
         {
-            _userManager = userManager;
+            _context = context;
         }
 
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            var user = new IdentityUser { UserName = model.Username, Email = model.Email };
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (result.Succeeded)
+            var user = new User
             {
-                return Ok(new { Message = "User registered successfully" });
-            }
+                UserName = model.Username,
+                Email = model.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password)
+            };
 
-            return BadRequest(result.Errors);
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "User registered successfully" });
         }
     }
 
